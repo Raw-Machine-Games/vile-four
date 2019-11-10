@@ -13,5 +13,5 @@
 
 class CoreInterface {
 public:
-    virtual void NotifyFromUI(const std::optional<ActionsConfig::State> &)=0;
+    virtual void NotifyFromUI(const std::optional<ActionsConfig::PlayerState> &)=0;
 };
