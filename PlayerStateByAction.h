@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ActionsConfig.h"
 
 class PlayerStateByAction {
