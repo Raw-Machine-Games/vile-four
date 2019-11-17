@@ -3,5 +3,7 @@
 
 class CoreInterface {
 public:
+
     virtual void NotifyFromUI(const std::optional<ActionsConfig::Action > &)=0;
+
 };

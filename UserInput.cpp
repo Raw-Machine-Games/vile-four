@@ -1,14 +1,16 @@
 #include "UserInput.h"
 
 void UserInput::SubscribeCore(std::shared_ptr<CoreInterface> core) {
+
 	core_ = core;
+
 }
 
 ActionsConfig::Action UserInput::GetActionFromEvent(const sf::Event &event) {
 
 	if (event.type == sf::Event::KeyPressed) {
-    	return ActionsConfig::Action::Nothing;
-    }
+		return ActionsConfig::Action::Nothing;
+	}
 
 	switch (event.key.code) {
 

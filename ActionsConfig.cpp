@@ -1,5 +1,6 @@
 #include "ActionsConfig.h"
 
+
 using PlayerState=ActionsConfig::PlayerState;
 using Action=ActionsConfig::Action;
 
@@ -108,4 +109,5 @@ const std::unordered_map<PlayerState, std::unordered_map<Action, PlayerState>> A
 												  		{Action::Ultimate, PlayerState::Start}
 										  		 }
 		}
+
 };
