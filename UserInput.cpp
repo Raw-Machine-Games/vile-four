@@ -1,60 +1,50 @@
 #include "UserInput.h"
 
+void UserInput::SubscribeCore(std::shared_ptr<CoreInterface> core) {
+	core_ = core;
+}
 
-using  namespace std;
+ActionsConfig::Action UserInput::GetActionFromEvent(const sf::Event &event) {
 
-    void UserInput::SubscribeCore(shared_ptr<CoreInterface> core) {
-        core_ = core;
+	if (event.type == sf::Event::KeyPressed) {
+    	return ActionsConfig::Action::Nothing;
     }
 
-    void UserInput::RequestTerminate() {
-        shouldTerminate_ = true;
-    }
+	switch (event.key.code) {
 
-    ActionsConfig::Action UserInput::GetPressedButton(sf::Event event) {
+		case sf::Keyboard::Left:
+			return ActionsConfig::Action::MoveLeft;
 
-        if (event.type == sf::Event::KeyPressed) {
-            return ActionsConfig::Action::Nothing;
-        }
+		case sf::Keyboard::Right:
+			return ActionsConfig::Action::MoveRight;
 
-        switch (event.key.code) {
-            case sf::Keyboard::Num1 :
-                return ActionsConfig::Action::FirstSkill;
+		case sf::Keyboard::Down:
+			return ActionsConfig::Action::Squat;
 
-            case sf::Keyboard::Left:
-                return ActionsConfig::Action::MoveLeft;
+		case sf::Keyboard::Up:
+			return ActionsConfig::Action::Jump;
 
-            case sf::Keyboard::Right:
-                return ActionsConfig::Action::MoveRight;
+		case sf::Keyboard::Num1 :
+			return ActionsConfig::Action::FirstSkill;
 
-            case sf::Keyboard::Num2:
-                return ActionsConfig::Action::SecondSkill;
+		case sf::Keyboard::Num2:
+			return ActionsConfig::Action::SecondSkill;
 
+		case sf::Keyboard::Num3:
+			return ActionsConfig::Action::ThirdSkill;
 
-            case sf::Keyboard::Num3:
-                return ActionsConfig::Action::ThirdSkill;
+		case sf::Keyboard::Num4:
+			return ActionsConfig::Action::Ultimate;
 
+		default:
+			return ActionsConfig::Action::Nothing;
+	}
 
-            case sf::Keyboard::Num4:
-                return ActionsConfig::Action::Ultimate;
+}
 
-
-            case sf::Keyboard::Down:
-                return ActionsConfig::Action::Squat;
-
-
-            case sf::Keyboard::Up:
-                return ActionsConfig::Action::Jump;
-
-        }
-        return ActionsConfig::Action::Nothing;
-    }
-
-    void UserInput::Run(sf::Event &event) {
-        ActionsConfig::State newState = ActionsConfig::GetState(stateNow, GetPressedButton(event));
-        core_->NotifyFromUI(newState);
-        stateNow = newState;
-        this_thread::sleep_for(chrono::milliseconds(100));
-
-    }
-
+void UserInput::ProceedEvent(const sf::Event &event) {
+	auto action = UserInput::GetActionFromEvent(event);
+	if (action != ActionsConfig::Action::Nothing) {
+		core_->NotifyFromUI(action);
+	}
+}

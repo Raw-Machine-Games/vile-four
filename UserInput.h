@@ -1,27 +1,13 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
-#include <unordered_map>
-#include <optional>
-#include <atomic>
-#include <thread>
-#include <future>
 #include "ActionsConfig.h"
 #include "CoreInterface.h"
-
-
+#include <memory>
+#include <SFML/Graphics.hpp>
 class UserInput {
 private:
     std::shared_ptr<CoreInterface> core_;
-    std::atomic_bool shouldTerminate_ = false;
-    ActionsConfig::State stateNow = ActionsConfig::State::Start;
+	static ActionsConfig::Action GetActionFromEvent(const sf::Event &event);
 public:
     void SubscribeCore(std::shared_ptr<CoreInterface> core);
-    void RequestTerminate();
-    ActionsConfig::Action GetPressedButton(sf::Event event);
-    void Run(sf::Event &event);
-
+	void ProceedEvent(const sf::Event &event);
 };

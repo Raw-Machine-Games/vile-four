@@ -1,62 +1,111 @@
 #include "ActionsConfig.h"
 
-ActionsConfig::State ActionsConfig::GetState(const State &state, const Action &action) {
-    if (automata_.find(state) != automata_.end()) {
-        if (automata_[state].find(action) != automata_[state].end())
-            return automata_[state][action];
-    }
-    return State::Error;
+using PlayerState=ActionsConfig::PlayerState;
+using Action=ActionsConfig::Action;
+
+PlayerState ActionsConfig::GetNextState(const PlayerState &previous_state, const Action &current_action) {
+	if (player_state_machine_.find(previous_state) != player_state_machine_.end()) {
+		if (player_state_machine_.at(previous_state).find(current_action) !=
+			player_state_machine_.at(previous_state).end()) {
+			return player_state_machine_.at(previous_state).at(current_action);
+		}
+	}
+	return PlayerState::Error;
 }
-std::unordered_map<ActionsConfig::State, std::unordered_map<ActionsConfig::Action, ActionsConfig::State>> ActionsConfig::automata_{
-        {Start,              {{Action::FirstSkill, State::RageFirstStage},
-                                     {Action::SecondSkill, State::Strong},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkFirstStage}
-                             }
-        },
 
-        {State::RageFirstStage,     {{Action::FirstSkill, State::RageSecondStage},
-                                     {Action::SecondSkill, State::RageSecondStage},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkFirstStage},
-                             }
-        },
+const std::unordered_map<PlayerState, std::unordered_map<Action, PlayerState>> ActionsConfig::player_state_machine_{
+		{PlayerState::Start,              {{Action::FirstSkill, PlayerState::RageFirstStage},
+												  		{Action::SecondSkill, PlayerState::Strong},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkFirstStage},
+												  		{Action::MoveLeft, PlayerState ::MoveLft},
+												  		{Action ::MoveRight, PlayerState ::MoveRght},
+												  		{Action ::Jump, PlayerState ::Jmp},
+												  		{Action ::Squat, PlayerState ::Sqt}
+										  		 }
+		},
+		{PlayerState::MoveRght,            {{Action::FirstSkill, PlayerState::RageFirstStage},
+										   				{Action::SecondSkill, PlayerState::Strong},
+										   				{Action::ThirdSkill, PlayerState::Healthy},
+										   				{Action::Ultimate, PlayerState::BerserkFirstStage},
+										   				{Action::MoveLeft, PlayerState ::MoveLft},
+										   				{Action ::MoveRight, PlayerState ::MoveRght},
+										   				{Action ::Jump, PlayerState ::Jmp},
+										   				{Action ::Squat, PlayerState ::Sqt}
+										   		  }
+		},
+		 {PlayerState::MoveLft,            {{Action::FirstSkill, PlayerState::RageFirstStage},
+											 			{Action::SecondSkill, PlayerState::Strong},
+											 			{Action::ThirdSkill, PlayerState::Healthy},
+											 			{Action::Ultimate, PlayerState::BerserkFirstStage},
+											 			{Action::MoveLeft, PlayerState ::MoveLft},
+											 			{Action ::MoveRight, PlayerState ::MoveRght},
+											 			{Action ::Jump, PlayerState ::Jmp},
+											 			{Action ::Squat, PlayerState ::Sqt}
+		 										  }
+		 },
+		  {PlayerState::Jmp,            {{Action::FirstSkill, PlayerState::RageFirstStage},
+											  			{Action::SecondSkill, PlayerState::Strong},
+											 		 	{Action::ThirdSkill, PlayerState::Healthy},
+											  			{Action::Ultimate, PlayerState::BerserkFirstStage},
+											  			{Action::MoveLeft, PlayerState ::MoveLft},
+											  			{Action ::MoveRight, PlayerState ::MoveRght},
+											  			{Action ::Jump, PlayerState ::Jmp},
+											  			{Action ::Squat, PlayerState ::Sqt}
+		  									   }
+		  },
+		   {PlayerState::Sqt,            {{Action::FirstSkill, PlayerState::RageFirstStage},
+											   			{Action::SecondSkill, PlayerState::Strong},
+											   			{Action::ThirdSkill, PlayerState::Healthy},
+											   			{Action::Ultimate, PlayerState::BerserkFirstStage},
+											   			{Action::MoveLeft, PlayerState ::MoveLft},
+											   			{Action ::MoveRight, PlayerState ::MoveRght},
+											   			{Action ::Jump, PlayerState ::Jmp},
+											   			{Action ::Squat, PlayerState ::Sqt}
+		   									    }
+		   },
 
-        {State::RageSecondStage,    {{Action::FirstSkill, State::RageSecondStage},
-                                     {Action::SecondSkill, State::Strongest},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkSecondStage}
+		{PlayerState::RageFirstStage,     {{Action::FirstSkill, PlayerState::RageSecondStage},
+												  		{Action::SecondSkill, PlayerState::RageSecondStage},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkFirstStage}
+										 		 }
+		},
 
-                             }
-        },
-        {State::BerserkFirstStage,  {{Action::FirstSkill, State::BerserkSecondStage},
-                                     {Action::SecondSkill, State::Strongest},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkSecondStage}
-                             }
-        },
-        {State::BerserkSecondStage, {{Action::FirstSkill, State::BerserkSecondStage},
-                                     {Action::SecondSkill, State::Strongest},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkSecondStage}
-                             }
-        },
-        {State::Strong,             {{Action::FirstSkill, State::RageFirstStage},
-                                     {Action::SecondSkill, State::Strongest},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkFirstStage}
-                             }
-        },
-        {State::Healthy, {{Action::FirstSkill, State::RageFirstStage},
-                                     {Action::SecondSkill, State::Strong},
-                                     {Action::ThirdSkill, State::Healthy},
-                                     {Action::Ultimate, State::BerserkFirstStage}
-                             }
-        },
-        {State::Strongest, {{Action::FirstSkill, State::Start},
-                                     {Action::SecondSkill, State::Start},
-                                     {Action::ThirdSkill, State::Start},
-                                     {Action::Ultimate, State::Start}
-                             }
-        }
+		{PlayerState::RageSecondStage,    {{Action::FirstSkill, PlayerState::RageSecondStage},
+												  		{Action::SecondSkill, PlayerState::Strongest},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkSecondStage}
+										  		 }
+		},
+		{PlayerState::BerserkFirstStage,  {{Action::FirstSkill, PlayerState::BerserkSecondStage},
+												  		{Action::SecondSkill, PlayerState::Strongest},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkSecondStage}
+										  		 }
+		},
+		{PlayerState::BerserkSecondStage, {{Action::FirstSkill, PlayerState::BerserkSecondStage},
+												  		{Action::SecondSkill, PlayerState::Strongest},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkSecondStage}
+										  		 }
+		},
+		{PlayerState::Strong,             {{Action::FirstSkill, PlayerState::RageFirstStage},
+									 					{Action::SecondSkill, PlayerState::Strongest},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkFirstStage}
+										  		 }
+		},
+		{PlayerState::Healthy,            {{Action::FirstSkill, PlayerState::RageFirstStage},
+												  		{Action::SecondSkill, PlayerState::Strong},
+												  		{Action::ThirdSkill, PlayerState::Healthy},
+												  		{Action::Ultimate, PlayerState::BerserkFirstStage}
+										  		 }
+		},
+		{PlayerState::Strongest,          {{Action::FirstSkill, PlayerState::Start},
+												  		{Action::SecondSkill, PlayerState::Start},
+												  		{Action::ThirdSkill, PlayerState::Start},
+												  		{Action::Ultimate, PlayerState::Start}
+										  		 }
+		}
 };

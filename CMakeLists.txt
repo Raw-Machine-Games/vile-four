@@ -1,12 +1,17 @@
-cmake_minimum_required(VERSION 3.15)
-project(SFML_PROJECT)
+project(VILE_FOUR)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(/home/konstantin/build/SFML/include)
+if (NOT DEFINED SFML_ROOT)
+    message(FATAL_ERROR "SFML_ROOT is not set or SFML library not found.")
+endif ()
 
-link_directories(/home/konstantin/build/SFML/lib)
+set(SFML_DIR "${SFML_ROOT}/lib/cmake/SFML")
 
-add_executable(SFML_PROJECT main.cpp UserInput.cpp UserInput.h ActionsConfig.cpp ActionsConfig.h CoreInterface.h)
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
-target_link_libraries(SFML_PROJECT sfml-graphics sfml-window sfml-system)
+file(GLOB SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp ${PROJECT_SOURCE_DIR}/*.h)
+
+add_executable(VILE_FOUR ${SOURCE_FILES})
+
+target_link_libraries(VILE_FOUR sfml-graphics sfml-window sfml-system)
